@@ -55,87 +55,93 @@ void swap(ull* a, ull* b) { // swap(&a, &b);
 
 // Сортировки:
 // Сортировка выбора
+void choose_sort_increase(ull* a, uint n) {
+	uint i, j, id;
+	ull min;
+	for (i = 0; i < n; i++) {
+		min = a[i];
+		id = i;
+		for (j = i + 1; j < n; j++) {
+			if (a[j] < min) {
+				min = a[j];
+				id = j;
+			}
+		}
+		swap(&a[id], &a[i]);
+	}
+}
+void choose_sort_decrease(ull* a, uint n) {
+	uint i, j, id;
+	ull max;
+	for (i = 0; i < n; i++) {
+		max = a[i];
+		id = i;
+		for (j = i + 1; j < n; j++) {
+			if (a[j] > max) {
+				max = a[j];
+				id = j;
+			}
+		}
+		swap(&a[id], &a[i]);
+	}
+}
 void choose_sort(ull* a, uint n, int mode) {
-	if (mode == 0) {  // increase
-		uint i, j, id;
-		ull min;
-		for (i = 0; i < n; i++) {
-			min = a[i];
-			id = i;
-			for (j = i + 1; j < n; j++) {
-				if (a[j] < min) {
-					min = a[j];
-					id = j;
-				}
-			}
-			swap(&a[id], &a[i]);
-		}
-	}
-	if (mode == -1) { // decrease
-		uint i, j, id;
-		ull max;
-		for (i = 0; i < n; i++) {
-			max = a[i];
-			id = i;
-			for (j = i + 1; j < n; j++) {
-				if (a[j] > max) {
-					max = a[j];
-					id = j;
-				}
-			}
-			swap(&a[id], &a[i]);
-		}
-	}
+	if (mode == 0)  choose_sort_increase(a, n);
+	if (mode == -1) choose_sort_decrease(a, n);
 }
 
 // Сортировка вставками
-void insert_sort(ull* a, uint n, int mode) {
-	if (mode == 0) {  // increase
-		uint i, j;
-		ull tmp;
-		for (i = 1; i < n; i++) {
-			tmp = a[i];
-			j = i - 1;
-			while ((j >= 0) && (a[j] > tmp)) {
-				swap(&a[j + 1], &a[j]);
-				j--;
-			}
-		}
-	}
-	if (mode == -1) { // decrease
-		uint i, j;
-		ull tmp;
-		for (i = 1; i < n; i++) {
-			tmp = a[i];
-			j = i - 1;
-			while ((j >= 0) && (a[j] < tmp)) {
-				swap(&a[j + 1], &a[j]);
-				j--;
-			}
+void insert_sort_increase(ull* a, uint n) {
+	int i, j;
+	ull tmp;
+	for (i = 1; i < n; i++) {
+		tmp = a[i];
+		j = i - 1;
+		while ((j >= 0) && (a[j] > tmp)) {
+			swap(&a[j + 1], &a[j]);
+			j--;
 		}
 	}
 }
+void insert_sort_decrease(ull* a, uint n) {
+	int i, j;
+	ull tmp;
+	for (i = 1; i < n; i++) {
+		tmp = a[i];
+		j = i - 1;
+		while ((j >= 0) && (a[j] < tmp)) {
+			swap(&a[j + 1], &a[j]);
+			j--;
+		}
+	}
+}
+void insert_sort(ull* a, uint n, int mode) {
+	if (mode == 0)  insert_sort_increase(a, n);
+	if (mode == -1) insert_sort_decrease(a, n);
+}
 
 // Сортировка "пузырьком"
+void bubble_sort_increase(ull* a, uint n) {
+	uint i, j;
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n - i - 1; j++) {
+			if (a[j + 1] < a[j])
+				swap(&a[j], &a[j + 1]);
+		}
+	}
+}
+void bubble_sort_decrease(ull* a, uint n) {
+	uint i, j;
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n - i - 1; j++) {
+			if (a[j + 1] > a[j])
+				swap(&a[j], &a[j + 1]);
+		}
+	}
+}
 void bubble_sort(ull* a, uint n, int mode) { // РАБОТАЕТ НЕ ПРАВИЛЬНО!!!
-	if (mode == 0) {  // increase
-		uint i, j;
-		for (i = 0; i < n; i++) {
-			for (j = 0; j < n - i - 1; j++) {
-				if (a[j + 1] < a[j])
-					swap(&a[j], &a[j + 1]);
-			}
-		}
-	}
-	if (mode == -1) { // decrease
-		uint i, j;
-		for (i = 0; i < n; i++) {
-			for (j = 0; j < n - i - 1; j++) {
-				if (a[j + 1] > a[j])
-					swap(&a[j], &a[j + 1]);
-			}
-		}
-	}
+	if (mode == 0)  bubble_sort_increase(a, n);
+	if (mode == -1) bubble_sort_decrease(a, n);
 }
 
 // Сортировка слиянием
@@ -202,7 +208,7 @@ void merge_sort(ull* a, uint n, int mode) {
 // Быстрая сортировка
 void quick_sort_increase(ull* a, uint low, uint high) {
 	ull mid;
-	ull l = low, h = high;
+	uint l = low, h = high;
 	mid = a[(l + h) / 2];
 	while (l < h) {
 		while (a[l] < mid)
@@ -254,8 +260,8 @@ int if_a_in_b(ll a, ll* b, uint n) {
 }
 
 ll index(ull* arr, ull* source, ll* indexes, uint n, uint k) {
-	ll i, ind;
-	for (i = 0; i < n; i++) 
+	ll i, ind = 0;
+	for (i = 0; i < n; i++)
 		if (arr[k] == source[i]) {
 			ind = i;
 			if (if_a_in_b(ind, indexes, n))
@@ -295,7 +301,7 @@ int main() {
 	setlocale(LC_ALL, "rus");
 	uint i = 0, N = 0;
 	int inp, srt, mode = 0;
-	float timer;
+	float timer = 0;
 	clock_t start_timer, end_timer;
 	ull* size = (ull*)malloc(MAX_PATH * sizeof(ull));
 	ull* arr = (ull*)malloc(MAX_PATH * sizeof(ull));
@@ -314,14 +320,14 @@ int main() {
 			continue;
 		}
 		names[i] = File;
-		fname[i-2] = names[i].cFileName;
-		size[i-2] = names[i].nFileSizeLow;
+		fname[i - 2] = names[i].cFileName;
+		size[i - 2] = names[i].nFileSizeLow;
 		i++;
 		N++;
 	} while (FindNextFileW(hfile, &File) != NULL);
-	
+
 	while (1) {
-		start:
+	start:
 		menu();
 		do {
 			scanf("%d", &inp);
@@ -340,8 +346,8 @@ int main() {
 					continue;
 				}
 				names[i] = File;
-				fname[i-2] = names[i].cFileName;
-				size[i-2] = names[i].nFileSizeLow;
+				fname[i - 2] = names[i].cFileName;
+				size[i - 2] = names[i].nFileSizeLow;
 				i++;
 				N++;
 			} while (FindNextFileW(hfile, &File) != NULL);
@@ -361,15 +367,15 @@ int main() {
 			goto start;
 		}
 		if (inp == 3) {
-			start_sort:
+		start_sort:
 			system("cls");
 			menu_sortings(mode);
 			do {
 				scanf("%d", &srt);
 			} while (srt < 0 || srt > 6);
-			
+
 			if (srt == 0) goto start;
-			
+
 			if (srt == 6) {
 				if (mode == 0)
 					mode = -1;
@@ -385,28 +391,28 @@ int main() {
 				end_timer = clock();
 				timer = (double)(end_timer - start_timer) / CLOCKS_PER_SEC;
 			}
-			
+
 			if (srt == 2) {
 				start_timer = clock();
 				insert_sort(arr, N, mode);
 				end_timer = clock();
 				timer = (double)(end_timer - start_timer) / CLOCKS_PER_SEC;
 			}
-			
+
 			if (srt == 3) {
 				start_timer = clock();
 				bubble_sort(arr, N, mode);
 				end_timer = clock();
 				timer = (double)(end_timer - start_timer) / CLOCKS_PER_SEC;
 			}
-			
+
 			if (srt == 4) {
 				start_timer = clock();
 				merge_sort(arr, N, mode);
 				end_timer = clock();
 				timer = (double)(end_timer - start_timer) / CLOCKS_PER_SEC;
 			}
-			
+
 			if (srt == 5) {
 				start_timer = clock();
 				quick_sort(arr, N, mode);
@@ -439,5 +445,8 @@ int main() {
 			if (inp == 0) { system("cls"); goto start; }
 		}
 	}
+	free(size);
+	free(arr);
+	free(indexes);
 	return 0;
 }
